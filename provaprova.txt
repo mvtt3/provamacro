@@ -1,0 +1,687 @@
+
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Confronto Excel</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <style>
+    :root {
+      --primary: #3498db;
+      --primary-dark: #2980b9;
+      --primary-light: #e1f0fa;
+      --secondary: #2c3e50;
+      --white: #ffffff;
+      --light-gray: #f4f6f9;
+      --border-color: #ddd;
+      --text-dark: #333;
+      --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      --transition: all 0.3s ease;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--light-gray);
+      color: var(--text-dark);
+      margin: 0;
+      min-height: 100vh;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      padding: 2rem;
+    }
+    
+    header {
+      background-color: var(--secondary);
+      color: var(--white);
+      width: 100%;
+      padding: 1.5rem 0;
+      text-align: center;
+      box-shadow: var(--box-shadow);
+      margin-bottom: 2rem;
+    }
+    
+    h1 {
+      font-size: 2.5rem;
+      margin: 0;
+    }
+    
+    .app-description {
+      margin-top: 0.5rem;
+      color: var(--white);
+      opacity: 0.8;
+      font-size: 1rem;
+    }
+    
+    .file-section {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      margin-bottom: 2rem;
+      justify-content: center;
+    }
+    
+    .file-container {
+      background: var(--white);
+      padding: 1.5rem;
+      border-radius: 10px;
+      box-shadow: var(--box-shadow);
+      flex: 1;
+      min-width: 280px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    
+    .file-container h3 {
+      margin-bottom: 1rem;
+      color: var(--secondary);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .file-icon {
+      font-size: 1.2rem;
+    }
+    
+    .file-input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+    
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 1rem;
+    }
+    
+    label {
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: var(--secondary);
+    }
+    
+    input[type="file"] {
+      padding: 0.5rem;
+      background-color: var(--white);
+      border: 2px dashed var(--primary);
+      border-radius: 8px;
+      cursor: pointer;
+      width: 100%;
+    }
+    
+    input[type="file"]:hover {
+      border-color: var(--primary-dark);
+      background-color: var(--primary-light);
+    }
+    
+    input[type="text"],
+    input[type="number"],
+    select {
+      padding: 0.75rem;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background-color: var(--white);
+      width: 100%;
+      font-size: 1rem;
+      transition: var(--transition);
+    }
+    
+    input[type="text"]:focus,
+    input[type="number"]:focus,
+    select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.3);
+    }
+    
+    .settings-container {
+      background: var(--white);
+      padding: 1.5rem;
+      border-radius: 10px;
+      box-shadow: var(--box-shadow);
+      margin-bottom: 2rem;
+    }
+    
+    .settings-title {
+      color: var(--secondary);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .settings-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+    
+    .slider-container {
+      margin-top: 0.5rem;
+    }
+    
+    .threshold-value {
+      display: inline-block;
+      font-weight: bold;
+      color: var(--primary);
+      margin-left: 0.5rem;
+    }
+    
+    .btn-container {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin: 2rem 0;
+    }
+    
+    .btn {
+      padding: 0.85rem 1.5rem;
+      border-radius: 8px;
+      border: none;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .btn-primary {
+      background-color: var(--primary);
+      color: var(--white);
+    }
+    
+    .btn-primary:hover {
+      background-color: var(--primary-dark);
+      transform: translateY(-2px);
+    }
+    
+    .btn-secondary {
+      background-color: var(--secondary);
+      color: var(--white);
+    }
+    
+    .btn-secondary:hover {
+      background-color: #3d5366;
+      transform: translateY(-2px);
+    }
+    
+    .btn:active {
+      transform: translateY(0);
+    }
+    
+    .btn-icon {
+      font-size: 1.2rem;
+    }
+    
+    #output {
+      width: 100%;
+      margin-top: 2rem;
+    }
+    
+    .results-container {
+      background: var(--white);
+      border-radius: 10px;
+      box-shadow: var(--box-shadow);
+      padding: 0.5rem;
+      overflow: auto;
+      max-height: 600px;
+    }
+    
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    
+    th, td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    th {
+      background-color: var(--secondary);
+      color: var(--white);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    
+    tr:hover {
+      background-color: var(--primary-light);
+    }
+    
+    tr:nth-child(even) {
+      background-color: rgba(244, 246, 249, 0.5);
+    }
+    
+    .similarity-cell {
+      font-weight: bold;
+    }
+    
+    .high-similarity {
+      color: #27ae60;
+    }
+    
+    .medium-similarity {
+      color: #f39c12;
+    }
+    
+    .low-similarity {
+      color: #e74c3c;
+    }
+    
+    .hidden {
+      display: none;
+    }
+    
+    .tooltip {
+      position: relative;
+      display: inline-block;
+      margin-left: 0.5rem;
+    }
+    
+    .tooltip .tooltiptext {
+      visibility: hidden;
+      width: 200px;
+      background-color: var(--secondary);
+      color: var(--white);
+      text-align: center;
+      border-radius: 6px;
+      padding: 0.75rem;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;
+      left: 50%;
+      margin-left: -100px;
+      opacity: 0;
+      transition: opacity 0.3s;
+      font-size: 0.85rem;
+      font-weight: normal;
+    }
+    
+    .tooltip:hover .tooltiptext {
+      visibility: visible;
+      opacity: 1;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .results-container {
+      animation: fadeIn 0.5s ease;
+    }
+    
+    @media (max-width: 768px) {
+      .file-section {
+        flex-direction: column;
+      }
+      
+      .settings-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .btn-container {
+        flex-direction: column;
+      }
+      
+      .btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+    
+    /* Loading spinner */
+    .spinner {
+      display: none;
+      width: 40px;
+      height: 40px;
+      margin: 0 auto;
+      border: 4px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top: 4px solid var(--primary);
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .spinner.show {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Confronto File Excel</h1>
+    <p class="app-description">Strumento per confrontare dati tra due file Excel con ricerca fuzzy</p>
+  </header>
+  
+  <div class="container">
+    <div class="file-section">
+      <div class="file-container">
+        <h3><span class="file-icon">📊</span> File Excel 1</h3>
+        <div class="file-input-group">
+          <label for="file1">Seleziona il primo file Excel:</label>
+          <input type="file" id="file1" accept=".xls,.xlsx,.xlsm" />
+          <div class="input-group">
+            <label for="sheet1">Seleziona il foglio:</label>
+            <select id="sheet1"></select>
+          </div>
+        </div>
+      </div>
+      
+      <div class="file-container">
+        <h3><span class="file-icon">📊</span> File Excel 2</h3>
+        <div class="file-input-group">
+          <label for="file2">Seleziona il secondo file Excel:</label>
+          <input type="file" id="file2" accept=".xls,.xlsx,.xlsm" />
+          <div class="input-group">
+            <label for="sheet2">Seleziona il foglio:</label>
+            <select id="sheet2"></select>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="settings-container">
+      <h3 class="settings-title"><span class="file-icon">⚙️</span> Impostazioni di confronto</h3>
+      <div class="settings-grid">
+        <div class="input-group">
+          <label for="colFile1">
+            Lettera della colonna file 1 da confrontare:
+            <div class="tooltip">ℹ️
+              <span class="tooltiptext">Inserisci la lettera della colonna che vuoi confrontare (es. B). Per più colonne, separa con virgole (es. B,C)</span>
+            </div>
+          </label>
+          <input type="text" id="colFile1" placeholder="Es. B" maxlength="10" />
+        </div>
+        
+        <div class="input-group">
+          <label for="colFile2">
+            Lettera della colonna file 2 da confrontare:
+            <div class="tooltip">ℹ️
+              <span class="tooltiptext">Inserisci la lettera della colonna che vuoi confrontare (es. B). Per più colonne, separa con virgole (es. B,C)</span>
+            </div>
+          </label>
+          <input type="text" id="colFile2" placeholder="Es. B" maxlength="10" />
+        </div>
+        
+        <div class="input-group">
+          <label for="colShow1">
+            Lettera della colonna file 1 da mostrare (opzionale):
+            <div class="tooltip">ℹ️
+              <span class="tooltiptext">Inserisci la lettera della colonna che vuoi mostrare nei risultati come contesto</span>
+            </div>
+          </label>
+          <input type="text" id="colShow1" placeholder="Es. A" maxlength="2" />
+        </div>
+        
+        <div class="input-group">
+          <label for="colShow2">
+            Lettera della colonna file 2 da mostrare (opzionale):
+            <div class="tooltip">ℹ️
+              <span class="tooltiptext">Inserisci la lettera della colonna che vuoi mostrare nei risultati come contesto</span>
+            </div>
+          </label>
+          <input type="text" id="colShow2" placeholder="Es. A" maxlength="2" />
+        </div>
+        
+        <div class="input-group">
+          <label for="threshold">
+            Soglia di similarità (%):
+            <div class="tooltip">ℹ️
+              <span class="tooltiptext">Solo risultati con una similarità pari o superiore a questa percentuale verranno mostrati</span>
+            </div>
+            <span id="thresholdValue" class="threshold-value">50%</span>
+          </label>
+          <div class="slider-container">
+            <input type="range" id="threshold" value="50" min="0" max="100" oninput="document.getElementById('thresholdValue').textContent = this.value + '%'" />
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="btn-container">
+      <button class="btn btn-primary" onclick="compareFiles()">
+        <span class="btn-icon">🔍</span> Confronta
+      </button>
+      <button class="btn btn-secondary" onclick="downloadExcel()" id="downloadBtn" disabled>
+        <span class="btn-icon">💾</span> Scarica risultati
+      </button>
+    </div>
+    
+    <div id="spinner" class="spinner"></div>
+    
+    <div id="output"></div>
+  </div>
+
+  <script>
+    let data1 = [], data2 = [], results = [];
+
+    function columnLetterToIndex(letter) {
+      let col = 0;
+      for (let i = 0; i < letter.length; i++) {
+        col *= 26;
+        col += letter.charCodeAt(i) - 'A'.charCodeAt(0) + 1;
+      }
+      return col - 1;
+    }
+
+    function normalize(str) {
+      return str?.toString().toLowerCase().replace(/[^a-z0-9]/gi, '').trim();
+    }
+
+    function getFuzzyScore(a, b) {
+      if (!a || !b) return 0;
+      let matches = 0;
+      for (let i = 0; i < Math.min(a.length, b.length); i++) {
+        if (a[i] === b[i]) matches++;
+      }
+      return Math.round((matches / Math.max(a.length, b.length)) * 100);
+    }
+
+    function loadSheetNames(fileInputId, sheetSelectId, dataArraySetter) {
+      const file = document.getElementById(fileInputId).files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+        const sheetNames = workbook.SheetNames;
+        const select = document.getElementById(sheetSelectId);
+        select.innerHTML = sheetNames.map(name => `<option value="${name}">${name}</option>`).join("");
+        const sheetName = select.value;
+        dataArraySetter(workbook.Sheets[sheetName]);
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
+    function loadSheetData(sheetSelectId, fileInputId, dataArraySetter) {
+      const file = document.getElementById(fileInputId).files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+        const sheetName = document.getElementById(sheetSelectId).value;
+        dataArraySetter(workbook.Sheets[sheetName]);
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
+    document.getElementById('file1').addEventListener('change', function () {
+      loadSheetNames('file1', 'sheet1', sheet => data1 = XLSX.utils.sheet_to_json(sheet, { header: 1 }));
+    });
+
+    document.getElementById('file2').addEventListener('change', function () {
+      loadSheetNames('file2', 'sheet2', sheet => data2 = XLSX.utils.sheet_to_json(sheet, { header: 1 }));
+    });
+
+    document.getElementById('sheet1').addEventListener('change', function () {
+      loadSheetData('sheet1', 'file1', sheet => data1 = XLSX.utils.sheet_to_json(sheet, { header: 1 }));
+    });
+
+    document.getElementById('sheet2').addEventListener('change', function () {
+      loadSheetData('sheet2', 'file2', sheet => data2 = XLSX.utils.sheet_to_json(sheet, { header: 1 }));
+    });
+
+    function compareFiles() {
+      const spinner = document.getElementById('spinner');
+      spinner.classList.add('show');
+      
+      // Piccolo ritardo per permettere allo spinner di apparire prima dell'elaborazione
+      setTimeout(() => {
+        try {
+          const colIndexes1 = document.getElementById('colFile1').value.toUpperCase().split(',').map(l => columnLetterToIndex(l.trim()));
+          const colIndexes2 = document.getElementById('colFile2').value.toUpperCase().split(',').map(l => columnLetterToIndex(l.trim()));
+          const colShow1 = document.getElementById('colShow1').value.toUpperCase().trim();
+          const colShow2 = document.getElementById('colShow2').value.toUpperCase().trim();
+          const colShowIndex1 = colShow1 ? columnLetterToIndex(colShow1) : null;
+          const colShowIndex2 = colShow2 ? columnLetterToIndex(colShow2) : null;
+          const threshold = parseInt(document.getElementById('threshold').value, 10) || 0;
+
+          results = [];
+
+          if (data1.length === 0 || data2.length === 0) {
+            alert("Carica entrambi i file Excel prima di confrontarli.");
+            spinner.classList.remove('show');
+            return;
+          }
+
+          if (colIndexes1.length === 0 || colIndexes2.length === 0) {
+            alert("Specifica almeno una colonna da confrontare per ciascun file.");
+            spinner.classList.remove('show');
+            return;
+          }
+
+          data1.forEach(row1 => {
+            let bestMatch = null;
+            let highestScore = 0;
+            let bestRawVal2 = "";
+            let bestRow2 = null;
+
+            const val1 = colIndexes1.map(index => normalize(row1[index])).join(' ');
+
+            data2.forEach(row2 => {
+              const val2 = colIndexes2.map(index => normalize(row2[index])).join(' ');
+              const score = getFuzzyScore(val1, val2);
+
+              if (score > highestScore) {
+                highestScore = score;
+                bestRawVal2 = colIndexes2.map(index => row2[index]).join(' ');
+                bestRow2 = row2;
+              }
+            });
+
+            if (highestScore >= threshold) {
+              results.push({
+                'Valore File 1': colIndexes1.map(index => row1[index]).join(' '),
+                'Contesto File 1': colShowIndex1 !== null ? row1[colShowIndex1] : '',
+                'Valore File 2': bestRawVal2,
+                'Contesto File 2': colShowIndex2 !== null ? bestRow2?.[colShowIndex2] : '',
+                'Similarità': highestScore + '%'
+              });
+            }
+          });
+
+          displayResults(results);
+        } catch (error) {
+          alert("Si è verificato un errore durante il confronto: " + error.message);
+          spinner.classList.remove('show');
+        }
+      }, 100);
+    }
+
+    function displayResults(matches) {
+      const output = document.getElementById('output');
+      const spinner = document.getElementById('spinner');
+      const downloadBtn = document.getElementById('downloadBtn');
+      
+      if (!matches.length) {
+        output.innerHTML = '<div class="results-container"><p style="padding: 1.5rem; text-align: center;">Nessuna corrispondenza trovata con la soglia di similarità impostata.</p></div>';
+        spinner.classList.remove('show');
+        downloadBtn.disabled = true;
+        return;
+      }
+
+      // Ordina i risultati per similarità (decrescente)
+      matches.sort((a, b) => parseInt(b['Similarità']) - parseInt(a['Similarità']));
+
+      let html = '<div class="results-container"><table><thead><tr><th>Valore File 1</th><th>Contesto File 1</th><th>Valore File 2</th><th>Contesto File 2</th><th>Similarità</th></tr></thead><tbody>';
+      
+      matches.forEach(match => {
+        const similarityValue = parseInt(match['Similarità']);
+        let similarityClass = 'low-similarity';
+        
+        if (similarityValue >= 80) {
+          similarityClass = 'high-similarity';
+        } else if (similarityValue >= 50) {
+          similarityClass = 'medium-similarity';
+        }
+        
+        html += `<tr>
+            <td>${match['Valore File 1'] || '-'}</td>
+            <td>${match['Contesto File 1'] || '-'}</td>
+            <td>${match['Valore File 2'] || '-'}</td>
+            <td>${match['Contesto File 2'] || '-'}</td>
+            <td class="similarity-cell ${similarityClass}">${match['Similarità']}</td>
+          </tr>`;
+      });
+
+      html += '</tbody></table></div>';
+      html += `<p style="text-align: center; margin-top: 1rem;">Trovate ${matches.length} corrispondenze.</p>`;
+      
+      output.innerHTML = html;
+      spinner.classList.remove('show');
+      downloadBtn.disabled = false;
+    }
+
+    function downloadExcel() {
+      if (results.length === 0) {
+        alert("Nessun risultato da scaricare.");
+        return;
+      }
+      
+      document.getElementById('spinner').classList.add('show');
+      
+      setTimeout(() => {
+        try {
+          const ws = XLSX.utils.json_to_sheet(results);
+          const wb = XLSX.utils.book_new();
+          XLSX.utils.book_append_sheet(wb, ws, "Risultati");
+          XLSX.writeFile(wb, "risultati_confronto.xlsx");
+        } catch (error) {
+          alert("Errore durante il download: " + error.message);
+        } finally {
+          document.getElementById('spinner').classList.remove('show');
+        }
+      }, 100);
+    }
+  </script>
+</body>
+</html>
